@@ -104,7 +104,7 @@ const upload = async (filePath) => {
     const fileSize = fs.statSync(file).size;
     const title = getFileName(filePath); // Filename becomes title
     const category = "27"; // 'Education' category
-    const privacy = "private"; // unlisted video setting
+    const privacy = "unlisted"; // unlisted video setting
 
     // Initialize youtube API
     const youtube = google.youtube({ version: "v3", auth });
