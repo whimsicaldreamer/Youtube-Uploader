@@ -5,7 +5,7 @@ const {
 const upload            = require("./upload");
 
 const folderPath        = "../../demo"; // Directory your video files are located
-const logPath           = `./logs/log-${ Date.now() }`;
+const logPath           = `./logs/log-${ Date.now() }.txt`;
 
 const main = async () => {
     const allFiles = await getFiles(folderPath);
