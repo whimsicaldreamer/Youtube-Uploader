@@ -1,4 +1,8 @@
-const {
+const terminal = require( 'terminal-kit' ).terminal ;
+
+terminal.white.bgBrightBlue('Welcome to youtube uploader')
+
+/* const {
     getFiles,
     writeLogFile
 }                       = require("./files");
@@ -31,4 +35,4 @@ const main = async () => {
 main()
 .catch(error => {
     console.log(error);
-});
+}); */
