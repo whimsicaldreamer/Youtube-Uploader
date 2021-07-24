@@ -1,28 +1,59 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div class="main_container">
+    <h2>Youtube Uploader - Experimental</h2>
+
+    <button v-if="!isAuthenticated" class="login_button" @click="loginWithGoogle">Login with Google</button>
+
+    <div v-else class="file_upload_container">
+      File upload container here
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+
+  },
+  data () {
+    return {
+      isAuthenticated: false
+    }
+  },
+  methods: {
+    async loginWithGoogle () {
+      try {
+        const googleUser = await this.$gAuth.signIn()
+        if (!googleUser) {
+          return null
+        }
+
+        this.isAuthenticated = this.$gAuth.isAuthorized
+
+        const authResponse = googleUser.getAuthResponse()
+
+        console.log(authResponse)
+
+      } catch (error) {
+        return null
+      }
+    }
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+.main_container {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.login_button {
+  width: 300px;
+  height: 50px;
 }
 </style>
