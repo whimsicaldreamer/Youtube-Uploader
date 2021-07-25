@@ -5,7 +5,12 @@
     <button v-if="!isAuthenticated" class="login_button" @click="loginWithGoogle">Login with Google</button>
 
     <div v-else class="file_upload_container">
-      File upload container here
+      <div class="uploader">
+        <input type="file" multiple accept="video/*" @change="onFileSelect" />
+        <button v-if="filesSelected.length > 0">Upload {{ filesSelected.length }} Files</button>
+      </div>
+
+      <button v-if="isAuthenticated" class="logout_button" @click="logout">Logout</button>
     </div>
   </div>
 </template>
@@ -19,7 +24,16 @@ export default {
   },
   data () {
     return {
-      isAuthenticated: false
+      isAuthenticated: false,
+      filesSelected: [],
+      gAccess_token: null
+    }
+  },
+  created () {
+    this.gAccess_token = localStorage.getItem('gAccessToken')
+
+    if (this.gAccess_token) {
+      this.isAuthenticated = true
     }
   },
   methods: {
@@ -33,12 +47,27 @@ export default {
         this.isAuthenticated = this.$gAuth.isAuthorized
 
         const authResponse = googleUser.getAuthResponse()
-
-        console.log(authResponse)
+        localStorage.setItem('gAccessToken', authResponse.access_token)
 
       } catch (error) {
         return null
       }
+    },
+    async logout () {
+      const response = await this.$gAuth.signOut()
+      if (response) {
+        localStorage.removeItem('gAccessToken')
+        this.isAuthenticated = false
+      }
+    },
+    onFileSelect (event) {
+      event.target.files.forEach(file => {
+        this.filesSelected.push({ 
+          name: file.name,
+          size: file.size,
+          type: file.type 
+        })
+      })
     }
   }
 }
@@ -52,8 +81,16 @@ export default {
   align-items: center;
   flex-direction: column;
 }
-.login_button {
+.login_button,
+.logout_button {
   width: 300px;
   height: 50px;
+}
+.file_upload_container {
+  flex-direction: column;
+}
+.uploader {
+  display: flex;
+  margin-bottom: 50px;
 }
 </style>
