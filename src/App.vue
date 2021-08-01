@@ -1,33 +1,25 @@
 <template>
   <div class="main_container">
-    <h2>Youtube Uploader - Experimental</h2>
+    <div class="navbar">
+      <h2>Youtube Uploader - Experimental</h2>
+      <button v-if="isAuthenticated" class="logout_button" @click="logout">Logout</button>
+    </div>
 
     <button v-if="!isAuthenticated" class="login_button" @click="loginWithGoogle">Login with Google</button>
 
     <div v-else class="file_upload_container">
-      <div class="uploader">
-        <div>
-          <input type="file" multiple accept="video/*" @change="onFileSelect" />
-          <button @click="uploadToYoutube" v-if="filesSelected.length > 0">Upload {{ filesSelected.length }} Files</button>
-        </div>
-        <div class="upload_list_container">
-          <div v-for="(item, index) in filesSelected" :key="index" class="upload_list_item">
-            {{ item.name }}
-          </div>
-        </div>
-      </div>
-      
-      <button v-if="isAuthenticated" class="logout_button" @click="logout">Logout</button>
+      <file-uploader />
     </div>
   </div>
 </template>
 
 <script>
+import FileUploader from './components/FileUploader.vue'
 
 export default {
   name: 'App',
   components: {
-
+    FileUploader
   },
   data () {
     return {
@@ -74,17 +66,6 @@ export default {
         console.warn(error)
       } 
     },
-    onFileSelect (event) {
-      this.uploadQueue = event.target.files
-
-      this.uploadQueue.forEach(file => {
-        this.filesSelected.push({ 
-          name: file.name,
-          size: file.size,
-          type: file.type 
-        })
-      })
-    },
     async uploadToYoutube () {
       this.uploadQueue.forEach(file => {
         this.upload(file)
@@ -92,22 +73,23 @@ export default {
     },
     async upload(file) {
       console.log(file)
-      const response = await this.$google.api.client.request({
-        path: 'youtube/v3/videos',
-        method: 'POST',
-        params: {
-          part: 'id,snippet,status',
-          notifySubscribers: false
-        },
-        body: {
+
+      const response = await this.$google.api.client.youtube.videos.insert({
+        part: "id,snippet,status",
+        notifySubscribers: false,
+        requestBody: {
           snippet: {
-            title: 'test video',
+            title: 'test video 1',
+            description: "",
             categoryId: this.uploadSettings.category
           },
           status: {
             privacyStatus: this.uploadSettings.privacy,
             selfDeclaredMadeForKids: false
-          }
+          },
+        },
+        media: {
+          body: file,
         }
       })
 
@@ -125,13 +107,27 @@ export default {
   align-items: center;
   flex-direction: column;
 }
-.login_button,
+.navbar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 50px;
+}
 .logout_button {
+  margin-left: 20px;
+  height: 30px;
+  width: 80px;
+}
+.login_button,
+.upload_button {
   width: 300px;
   height: 50px;
 }
 .file_upload_container {
   flex-direction: column;
+  min-width: 50%;
+}
+.file_upload_container > div {
+  text-align: center;
 }
 .uploader {
   display: flex;

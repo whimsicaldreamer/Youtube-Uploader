@@ -10,7 +10,11 @@
   "dependencies": {
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "filepond": "^4.28.2",
+    "filepond-plugin-file-validate-size": "^2.2.4",
+    "filepond-plugin-file-validate-type": "^1.2.6",
     "vue": "^2.6.11",
+    "vue-filepond": "^6.0.0",
     "vue-googleapis": "^1.0.10"
   },
   "devDependencies": {
