@@ -6,10 +6,17 @@
 
     <div v-else class="file_upload_container">
       <div class="uploader">
-        <input type="file" multiple accept="video/*" @change="onFileSelect" />
-        <button v-if="filesSelected.length > 0">Upload {{ filesSelected.length }} Files</button>
+        <div>
+          <input type="file" multiple accept="video/*" @change="onFileSelect" />
+          <button @click="uploadToYoutube" v-if="filesSelected.length > 0">Upload {{ filesSelected.length }} Files</button>
+        </div>
+        <div class="upload_list_container">
+          <div v-for="(item, index) in filesSelected" :key="index" class="upload_list_item">
+            {{ item.name }}
+          </div>
+        </div>
       </div>
-
+      
       <button v-if="isAuthenticated" class="logout_button" @click="logout">Logout</button>
     </div>
   </div>
@@ -26,7 +33,12 @@ export default {
     return {
       isAuthenticated: false,
       filesSelected: [],
-      gAccess_token: null
+      uploadQueue: null,
+      gAccess_token: null,
+      uploadSettings: {
+        privacy:'unlisted',
+        category: '27'
+      }
     }
   },
   created () {
@@ -39,35 +51,67 @@ export default {
   methods: {
     async loginWithGoogle () {
       try {
-        const googleUser = await this.$gAuth.signIn()
+        const googleUser = await this.$google.api.auth2.getAuthInstance().signIn()
         if (!googleUser) {
           return null
         }
 
-        this.isAuthenticated = this.$gAuth.isAuthorized
+        this.isAuthenticated = this.$google.api.auth2.getAuthInstance().isSignedIn.get()
 
         const authResponse = googleUser.getAuthResponse()
         localStorage.setItem('gAccessToken', authResponse.access_token)
 
       } catch (error) {
-        return null
+        console.warn(error)
       }
     },
-    async logout () {
-      const response = await this.$gAuth.signOut()
-      if (response) {
+    async logout () {      
+      try {
+        await this.$google.api.auth2.getAuthInstance().signOut()
         localStorage.removeItem('gAccessToken')
         this.isAuthenticated = false
-      }
+      } catch (error) {
+        console.warn(error)
+      } 
     },
     onFileSelect (event) {
-      event.target.files.forEach(file => {
+      this.uploadQueue = event.target.files
+
+      this.uploadQueue.forEach(file => {
         this.filesSelected.push({ 
           name: file.name,
           size: file.size,
           type: file.type 
         })
       })
+    },
+    async uploadToYoutube () {
+      this.uploadQueue.forEach(file => {
+        this.upload(file)
+      })
+    },
+    async upload(file) {
+      console.log(file)
+      const response = await this.$google.api.client.request({
+        path: 'youtube/v3/videos',
+        method: 'POST',
+        params: {
+          part: 'id,snippet,status',
+          notifySubscribers: false
+        },
+        body: {
+          snippet: {
+            title: 'test video',
+            categoryId: this.uploadSettings.category
+          },
+          status: {
+            privacyStatus: this.uploadSettings.privacy,
+            selfDeclaredMadeForKids: false
+          }
+        }
+      })
+
+      console.log(response)
     }
   }
 }
@@ -91,6 +135,10 @@ export default {
 }
 .uploader {
   display: flex;
+  flex-direction: column;
   margin-bottom: 50px;
+}
+.upload_list_container {
+  margin-top: 20px;
 }
 </style>

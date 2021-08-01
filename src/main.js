@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import App from './App.vue'
 
-import GAuth from 'vue-google-oauth2'
+import Gapi from 'vue-googleapis'
+const SCOPES = 'profile email https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube'
 const gauthOption = {
   clientId: `${process.env.VUE_APP_GOOGLE_CLIENT_ID}`,
-  scope: 'profile email',
+  scope: SCOPES,
   prompt: 'select_account'
 }
-Vue.use(GAuth, gauthOption)
+Vue.use(Gapi, gauthOption)
 
 Vue.config.productionTip = false
 

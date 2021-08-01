@@ -8090,10 +8090,10 @@ vue-eslint-parser@^7.0.0:
     lodash "^4.17.21"
     semver "^6.3.0"
 
-vue-google-oauth2@^1.5.8:
-  version "1.5.8"
-  resolved "https://registry.yarnpkg.com/vue-google-oauth2/-/vue-google-oauth2-1.5.8.tgz#9ed963aaafc1e80a276c195499024f369b02d5c8"
-  integrity sha512-mATpPrLjzjAoUwgFC2feEZEhyoFyItPQSdEgX3m+rHI17sXLEdKzcMLmk+8B1obu4J/YVuVRR9A1afs+4VEk0Q==
+vue-googleapis@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/vue-googleapis/-/vue-googleapis-1.0.10.tgz#dfc7a555c29a54be704c50829f18956063559b3b"
+  integrity sha512-im0lkw30wxeXCezz+jMpBPLjmbC4JCbBkbyo/QbtTRdKZuUIK+awP2uEPk8KVt2U8MNlIrSq2ugQYDLEsUzwmg==
 
 vue-hot-reload-api@^2.3.0:
   version "2.3.4"
